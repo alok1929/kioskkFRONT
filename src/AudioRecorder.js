@@ -1,17 +1,13 @@
-import React, { useState, useRef } from 'react';
-import { FaPlay, FaStop } from 'react-icons/fa'; // Assuming Font Awesome
-import MicLogo from './MicLogo';
+import React, { useEffect,useState, useRef } from 'react';
 
-
-const AudioRecorder = () => {
-  const [isRecording, setIsRecording] = useState(false);
-  const [audioURL, setAudioURL] = useState('');
+const AudioRecorder = ({ isRecording, onRecordingComplete }) => {
   const mediaRecorder = useRef(null);
   const audioChunks = useRef([]);
+  const [audioURL, setAudioURL] = useState('');
 
-  const toggleRecording = async () => {
-    try {
-      if (!isRecording) {
+  useEffect(() => {
+    const startRecording = async () => {
+      try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorder.current = new MediaRecorder(stream);
         
@@ -24,27 +20,34 @@ const AudioRecorder = () => {
           const audioUrl = URL.createObjectURL(audioBlob);
           setAudioURL(audioUrl);
           audioChunks.current = [];
+          onRecordingComplete();
         };
 
         mediaRecorder.current.start();
-        setIsRecording(true);
-      } else {
-        mediaRecorder.current.stop();
-        setIsRecording(false);
+      } catch (err) {
+        console.error("Error accessing the microphone:", err);
       }
-    } catch (err) {
-      console.error("Error accessing the microphone:", err);
+    };
+
+    const stopRecording = () => {
+      if (mediaRecorder.current && mediaRecorder.current.state !== 'inactive') {
+        mediaRecorder.current.stop();
+      }
+    };
+
+    if (isRecording) {
+      startRecording();
+    } else {
+      stopRecording();
     }
-  };
+
+    return () => {
+      stopRecording();
+    };
+  }, [isRecording, onRecordingComplete]);
 
   return (
-    <div className='flex flex-col items-center p-4'>
-      <button 
-        onClick={toggleRecording}
-        className={`px-4 py-2 rounded text-white`}
-      >
-        {isRecording ? <FaStop/>: <FaPlay/>}
-      </button>
+    <div className='flex  items-center '>
       {audioURL && (
         <audio src={audioURL} controls className="mt-4" />
       )}

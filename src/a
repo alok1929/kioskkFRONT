@@ -1,0 +1,66 @@
+import React, { useState } from 'react';
+import AudioRecorder from './AudioRecorder'; // Adjust the import path as per your file structure
+import { FaMicrophone, FaPaperPlane } from 'react-icons/fa';
+
+const App = () => {
+  const [isRecording, setIsRecording] = useState(false);
+
+  const handleMicrophoneClick = () => {
+    setIsRecording(!isRecording); // Toggle recording state
+  };
+
+  const handleRecordingComplete = () => {
+    setIsRecording(false); // Reset recording state when recording is complete
+  };
+
+  return (
+    <div className='min-h-screen flex flex-col'>
+      <header className='bg-blue-400 p-4 flex space-x-20'>
+        <div className='text-2xl font-mono py-2 text-white'>kioskBOT</div>
+        <div className='flex-grow flex items-center justify-center'>
+          <div className='border-gray-300 bg-red-200 rounded-full p-1 w-10'>
+            <div className='px-1 animate-pulse text-xl'>🙋</div>
+          </div>
+          <div className='px-6 p-2 flex font-semibold text-white'>
+            Hi! I'm a South Indian store assistant. Click 🔴 to start ordering!!
+          </div>
+        </div>
+      </header>
+
+      <main className='flex-grow flex items-center justify-center bg-gray-100'>
+        {/* Chatbot UI */}
+        <div className="max-w-lg w-full bg-white rounded-lg shadow-lg p-4">
+          <div className="overflow-y-auto max-h-[calc(100vh-160px)]">
+            {/* Chat messages component */}
+            {/* Replace with actual chat messages rendering */}
+            <div className="py-2 px-4 bg-gray-200 rounded-lg mb-2">
+              <div className="text-sm text-gray-600">Chat message goes here...</div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer className="fixed bottom-0 left-0 w-full bg-gray-900 text-white flex justify-center">
+        <div className='flex p-4 rounded-t-lg'>
+          <div className="flex flex-grow justify-center">
+            <AudioRecorder isRecording={isRecording} onRecordingComplete={handleRecordingComplete} />
+          </div>
+          <button
+            className={`p-4 text-gray-400 hover:text-white ${isRecording ? 'animate-spin' : ''}`}
+            onClick={handleMicrophoneClick}
+            aria-label={isRecording ? 'Stop recording' : 'Start recording'}
+          >
+            <FaMicrophone className="text-2xl" />
+          </button>
+          <button className="p-4 text-gray-400 hover:text-white flex items-center">
+            <FaPaperPlane className="text-2xl" />
+          </button>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
+
+
